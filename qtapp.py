@@ -2,7 +2,6 @@ import os
 import sys
 import winreg
 
-
 from urllib.parse import urlparse
 
 import win32gui
