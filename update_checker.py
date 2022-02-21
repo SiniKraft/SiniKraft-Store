@@ -1,6 +1,7 @@
 import json
 import sys
 import urllib.request
+import os.path
 import winreg
 
 from PySide2.QtWidgets import QMessageBox, QDialog
@@ -59,8 +60,8 @@ def perform():
     json = result[0]
     app_list = find_apps()
     for x in range(0, len(app_list)):
-        if json[app_list[x][0]] != app_list[x][2]:
-            pass
+        if json[app_list[x][0]][0] != app_list[x][2]:
+            print(json[app_list[x][0]][0], app_list[x][2])
 
 
 if __name__ == "__main__":
