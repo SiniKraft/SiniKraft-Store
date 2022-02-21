@@ -15,6 +15,8 @@ from PySide2.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QAbst
 
 from ui_sinikraft_launcher import Ui_MainWindow
 
+from update_checker import perform
+
 
 def find_apps():
     app_list = []
@@ -108,8 +110,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.webEngineView.setZoomFactor(1.000000000000000)
         self.gridLayout.addWidget(self.webEngineView, 0, 0, 1, 1)
         self.currentlySelected = None
+
         self.toolButton_2.clicked.connect(lambda: uninstall_app_from_gui(self))
         self.tableWidget.currentItemChanged.connect(self.update_selection)
+        self.toolButton_5.clicked.connect(perform)
 
         self.tableWidget.setRowCount(len(self.app_list))
         self.tableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
