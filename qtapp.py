@@ -1,11 +1,13 @@
 import os
 import sys
 import winreg
+
+
 from urllib.parse import urlparse
 
 import win32gui
 import win32ui
-from PySide2 import QtGui
+
 from PySide2.QtCore import Qt, QUrl, QSize, QBuffer, QIODevice
 from PySide2.QtGui import QDesktopServices, QIcon, QImage, QPixmap
 from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView
