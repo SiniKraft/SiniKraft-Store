@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'sinikraft_launchercPIxPr.ui'
+## Form generated from reading UI file 'sinikraft_launcherfQiUer.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.5
 ##
@@ -14,8 +14,8 @@ from PySide2.QtWidgets import *  # type: ignore
 
 from PySide2.QtWebEngineWidgets import QWebEngineView
 
-
 import ui_sinikraft_launcher_rc
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -69,7 +69,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.tableWidget)
 
-
         self.horizontalLayout_2.addWidget(self.groupBox)
 
         self.groupBox_2 = QGroupBox(self.centralwidget)
@@ -89,12 +88,9 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.webEngineView, 0, 0, 1, 1)
 
-
         self.verticalLayout_2.addLayout(self.gridLayout)
 
-
         self.horizontalLayout_2.addWidget(self.groupBox_2)
-
 
         self.horizontalLayout.addLayout(self.horizontalLayout_2, 2, 0, 1, 1)
 
@@ -108,62 +104,113 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5 = QHBoxLayout()
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.horizontalLayout_5.setSizeConstraint(QLayout.SetDefaultConstraint)
-        self.pushButton = QPushButton(self.groupBox_3)
-        self.pushButton.setObjectName(u"pushButton")
+        self.toolButton = QToolButton(self.groupBox_3)
+        self.toolButton.setObjectName(u"toolButton")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.toolButton.sizePolicy().hasHeightForWidth())
+        self.toolButton.setSizePolicy(sizePolicy1)
+        self.toolButton.setCursor(QCursor(Qt.ArrowCursor))
+        self.toolButton.setFocusPolicy(Qt.StrongFocus)
+        icon = QIcon()
+        icon.addFile(u":/images/plus_icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.toolButton.setIcon(icon)
+        self.toolButton.setIconSize(QSize(64, 64))
+        self.toolButton.setCheckable(False)
+        self.toolButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
 
-        self.horizontalLayout_5.addWidget(self.pushButton)
+        self.horizontalLayout_5.addWidget(self.toolButton)
 
         self.horizontalSpacer = QSpacerItem(100, 20, QSizePolicy.Maximum, QSizePolicy.Minimum)
 
         self.horizontalLayout_5.addItem(self.horizontalSpacer)
 
-        self.pushButton_2 = QPushButton(self.groupBox_3)
-        self.pushButton_2.setObjectName(u"pushButton_2")
+        self.toolButton_2 = QToolButton(self.groupBox_3)
+        self.toolButton_2.setObjectName(u"toolButton_2")
+        sizePolicy1.setHeightForWidth(self.toolButton_2.sizePolicy().hasHeightForWidth())
+        self.toolButton_2.setSizePolicy(sizePolicy1)
+        self.toolButton_2.setFocusPolicy(Qt.StrongFocus)
+        self.toolButton_2.setAutoFillBackground(False)
+        icon1 = QIcon()
+        icon1.addFile(u":/images/unins_icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.toolButton_2.setIcon(icon1)
+        self.toolButton_2.setIconSize(QSize(64, 64))
+        self.toolButton_2.setPopupMode(QToolButton.DelayedPopup)
+        self.toolButton_2.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
 
-        self.horizontalLayout_5.addWidget(self.pushButton_2)
+        self.horizontalLayout_5.addWidget(self.toolButton_2)
 
         self.horizontalSpacer_2 = QSpacerItem(100, 20, QSizePolicy.Maximum, QSizePolicy.Minimum)
 
         self.horizontalLayout_5.addItem(self.horizontalSpacer_2)
 
-        self.pushButton_3 = QPushButton(self.groupBox_3)
-        self.pushButton_3.setObjectName(u"pushButton_3")
+        self.toolButton_3 = QToolButton(self.groupBox_3)
+        self.toolButton_3.setObjectName(u"toolButton_3")
+        sizePolicy1.setHeightForWidth(self.toolButton_3.sizePolicy().hasHeightForWidth())
+        self.toolButton_3.setSizePolicy(sizePolicy1)
+        icon2 = QIcon()
+        icon2.addFile(u":/images/load_icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.toolButton_3.setIcon(icon2)
+        self.toolButton_3.setIconSize(QSize(64, 64))
+        self.toolButton_3.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
 
-        self.horizontalLayout_5.addWidget(self.pushButton_3)
+        self.horizontalLayout_5.addWidget(self.toolButton_3)
 
         self.horizontalSpacer_3 = QSpacerItem(100, 20, QSizePolicy.Maximum, QSizePolicy.Minimum)
 
         self.horizontalLayout_5.addItem(self.horizontalSpacer_3)
 
-        self.pushButton_4 = QPushButton(self.groupBox_3)
-        self.pushButton_4.setObjectName(u"pushButton_4")
+        self.toolButton_4 = QToolButton(self.groupBox_3)
+        self.toolButton_4.setObjectName(u"toolButton_4")
+        sizePolicy1.setHeightForWidth(self.toolButton_4.sizePolicy().hasHeightForWidth())
+        self.toolButton_4.setSizePolicy(sizePolicy1)
+        icon3 = QIcon()
+        icon3.addFile(u":/images/save_icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.toolButton_4.setIcon(icon3)
+        self.toolButton_4.setIconSize(QSize(64, 64))
+        self.toolButton_4.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
 
-        self.horizontalLayout_5.addWidget(self.pushButton_4)
+        self.horizontalLayout_5.addWidget(self.toolButton_4)
 
         self.horizontalSpacer_4 = QSpacerItem(100, 20, QSizePolicy.Maximum, QSizePolicy.Minimum)
 
         self.horizontalLayout_5.addItem(self.horizontalSpacer_4)
 
-        self.pushButton_5 = QPushButton(self.groupBox_3)
-        self.pushButton_5.setObjectName(u"pushButton_5")
+        self.toolButton_5 = QToolButton(self.groupBox_3)
+        self.toolButton_5.setObjectName(u"toolButton_5")
+        sizePolicy1.setHeightForWidth(self.toolButton_5.sizePolicy().hasHeightForWidth())
+        self.toolButton_5.setSizePolicy(sizePolicy1)
+        icon4 = QIcon()
+        icon4.addFile(u":/images/update_icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.toolButton_5.setIcon(icon4)
+        self.toolButton_5.setIconSize(QSize(64, 64))
+        self.toolButton_5.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
 
-        self.horizontalLayout_5.addWidget(self.pushButton_5)
+        self.horizontalLayout_5.addWidget(self.toolButton_5)
 
         self.horizontalSpacer_7 = QSpacerItem(100, 20, QSizePolicy.Maximum, QSizePolicy.Minimum)
 
         self.horizontalLayout_5.addItem(self.horizontalSpacer_7)
 
-        self.pushButton_6 = QPushButton(self.groupBox_3)
-        self.pushButton_6.setObjectName(u"pushButton_6")
+        self.toolButton_6 = QToolButton(self.groupBox_3)
+        self.toolButton_6.setObjectName(u"toolButton_6")
+        sizePolicy1.setHeightForWidth(self.toolButton_6.sizePolicy().hasHeightForWidth())
+        self.toolButton_6.setSizePolicy(sizePolicy1)
+        icon5 = QIcon()
+        icon5.addFile(u":/images/settings_icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.toolButton_6.setIcon(icon5)
+        self.toolButton_6.setIconSize(QSize(64, 64))
+        self.toolButton_6.setPopupMode(QToolButton.DelayedPopup)
+        self.toolButton_6.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        self.toolButton_6.setAutoRaise(False)
+        self.toolButton_6.setArrowType(Qt.NoArrow)
 
-        self.horizontalLayout_5.addWidget(self.pushButton_6)
-
+        self.horizontalLayout_5.addWidget(self.toolButton_6)
 
         self.horizontalLayout_4.addLayout(self.horizontalLayout_5)
 
-
         self.horizontalLayout_3.addWidget(self.groupBox_3)
-
 
         self.horizontalLayout.addLayout(self.horizontalLayout_3, 1, 0, 1, 1)
 
@@ -185,7 +232,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_6.addItem(self.horizontalSpacer_6)
 
-
         self.horizontalLayout.addLayout(self.horizontalLayout_6, 0, 0, 1, 1)
 
         MainWindow.setCentralWidget(self.centralwidget)
@@ -197,6 +243,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
+
     # setupUi
 
     def retranslateUi(self, MainWindow):
@@ -214,12 +261,11 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Latest Version", None));
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"News", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Actions", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Add", None))
-        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Uninstall", None))
-        self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Import Save Data", None))
-        self.pushButton_4.setText(QCoreApplication.translate("MainWindow", u"Export Save Data", None))
-        self.pushButton_5.setText(QCoreApplication.translate("MainWindow", u"Check For Updates", None))
-        self.pushButton_6.setText(QCoreApplication.translate("MainWindow", u"Update Setings", None))
+        self.toolButton.setText(QCoreApplication.translate("MainWindow", u"Add", None))
+        self.toolButton_2.setText(QCoreApplication.translate("MainWindow", u"Uninstall", None))
+        self.toolButton_3.setText(QCoreApplication.translate("MainWindow", u"Import Save Data", None))
+        self.toolButton_4.setText(QCoreApplication.translate("MainWindow", u"Export Save Data", None))
+        self.toolButton_5.setText(QCoreApplication.translate("MainWindow", u"Check For Updates", None))
+        self.toolButton_6.setText(QCoreApplication.translate("MainWindow", u"Update Setings", None))
         self.label.setText("")
     # retranslateUi
-

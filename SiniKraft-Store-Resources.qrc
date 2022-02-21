@@ -1,5 +1,11 @@
 <RCC>
   <qresource prefix="images">
+    <file>settings_icon.png</file>
+    <file>load_icon.png</file>
+    <file>save_icon.png</file>
+    <file>unins_icon.png</file>
+    <file>update_icon.png</file>
+    <file>unins_icon.png</file>
     <file>plus_icon.png</file>
     <file>no_photo.png</file>
     <file>SiniKraft-STORE-logo.png</file>

@@ -81,7 +81,6 @@ class HtmlView2(QWebEngineView):
         self.urlChanged.connect(lambda: self.open_url)
 
     def open_url(self):
-        print("URLChanged")
         QDesktopServices.openUrl(self.url())
 
 
