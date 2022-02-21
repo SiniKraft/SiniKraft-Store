@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Build App" type="ShConfigurationType">
+    <option name="SCRIPT_TEXT" value="@echo off &amp; &quot;venv\Scripts\pyinstaller.exe&quot; &quot;qtapp.spec&quot; --noconfirm &amp; rmdir /S /Q &quot;setup_files\&quot; &amp; xcopy &quot;dist\SiniKraft-STORE\*&quot; &quot;setup_files\&quot; /s /e /h /y &amp; copy &quot;LICENSE&quot; &quot;setup_files\License.txt&quot; &amp; &quot;Inno Setup 6\ISCC.exe&quot; &quot;setup.iss&quot; &amp; rmdir /S /Q &quot;setup_files\&quot; &amp; rmdir /S /Q &quot;build\&quot; &amp; rmdir /S /Q &quot;dist\SiniKraft-STORE\&quot; &amp; echo Done !" />
+    <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+    <option name="SCRIPT_PATH" value="" />
+    <option name="SCRIPT_OPTIONS" value="" />
+    <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+    <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+    <option name="INTERPRETER_PATH" value="" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="EXECUTE_IN_TERMINAL" value="true" />
+    <option name="EXECUTE_SCRIPT_FILE" value="false" />
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,4 +1,5 @@
 import os
+import subprocess
 import sys
 import winreg
 
@@ -37,7 +38,8 @@ def find_apps():
                             app_list.append((get_value("DisplayName").split(" version")[0], icon_str,
                                              get_value("DisplayVersion"), date,
                                              get_value("UninstallString"), get_value("QuietUninstallString"),
-                                             str(round(get_value("EstimatedSize") / 1024, 2)) + " Mo"))
+                                             (str(round(get_value("EstimatedSize") / 1024, 2)) + " Mo")
+                                             .replace(".", ",")))
 
             except (WindowsError, KeyError, ValueError):
                 continue
@@ -84,6 +86,11 @@ class HtmlView2(QWebEngineView):
         QDesktopServices.openUrl(self.url())
 
 
+def uninstall_app_from_gui(main_window: "MainWindow"):
+    if main_window.currentlySelected is not None:
+        subprocess.Popen(main_window.app_list[main_window.currentlySelected][4])
+
+
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
@@ -100,6 +107,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.webEngineView.setUrl(QUrl(u"https://sinikraft.github.io/website/fr/"))
         self.webEngineView.setZoomFactor(1.000000000000000)
         self.gridLayout.addWidget(self.webEngineView, 0, 0, 1, 1)
+        self.currentlySelected = None
+        self.toolButton_2.clicked.connect(lambda: uninstall_app_from_gui(self))
+        self.tableWidget.currentItemChanged.connect(self.update_selection)
 
         self.tableWidget.setRowCount(len(self.app_list))
         self.tableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
@@ -111,46 +121,52 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for apps in range(0, len(self.app_list)):
             icn = QIcon(QPixmap(u":/images/no_photo.png"))
             if self.app_list[apps][1] != "":
-                icons = win32gui.ExtractIconEx(self.app_list[apps][1], 0)
-                icon = icons[0][0]
-                width = height = 32
+                try:
+                    icons = win32gui.ExtractIconEx(self.app_list[apps][1], 0)
+                    icon = icons[0][0]
+                    width = height = 32
 
-                # Create DC and bitmap and make them compatible.
-                hdc = win32ui.CreateDCFromHandle(win32gui.GetDC(0))
-                hbmp = win32ui.CreateBitmap()
-                hbmp.CreateCompatibleBitmap(hdc, width, height)
-                hdc = hdc.CreateCompatibleDC()
-                hdc.SelectObject(hbmp)
+                    # Create DC and bitmap and make them compatible.
+                    hdc = win32ui.CreateDCFromHandle(win32gui.GetDC(0))
+                    hbmp = win32ui.CreateBitmap()
+                    hbmp.CreateCompatibleBitmap(hdc, width, height)
+                    hdc = hdc.CreateCompatibleDC()
+                    hdc.SelectObject(hbmp)
 
-                # Draw the icon.
-                win32gui.DrawIconEx(hdc.GetHandleOutput(), 0, 0, icon, width, height, 0, None, 0x0003)
+                    # Draw the icon.
+                    win32gui.DrawIconEx(hdc.GetHandleOutput(), 0, 0, icon, width, height, 0, None, 0x0003)
 
-                # Get the icon's bits and convert to a QtGui.QImage.
-                bitmapbits = hbmp.GetBitmapBits(True)
-                image = QImage(bitmapbits, width, height, QImage.Format_ARGB32_Premultiplied)
+                    # Get the icon's bits and convert to a QtGui.QImage.
+                    bitmapbits = hbmp.GetBitmapBits(True)
+                    image = QImage(bitmapbits, width, height, QImage.Format_ARGB32_Premultiplied)
 
-                # Write to and then load from a buffer to convert to PNG.
-                # This step is only necessary if you are displaying the image.
-                # QtWidgets.QLabel and similar have trouble displaying the current format.
-                buffer = QBuffer()
-                buffer.setOpenMode(QIODevice.ReadWrite)
-                image.save(buffer, "PNG")
-                image.loadFromData(buffer.data(), "PNG")
+                    # Write to and then load from a buffer to convert to PNG.
+                    # This step is only necessary if you are displaying the image.
+                    # QtWidgets.QLabel and similar have trouble displaying the current format.
+                    buffer = QBuffer()
+                    buffer.setOpenMode(QIODevice.ReadWrite)
+                    image.save(buffer, "PNG")
+                    image.loadFromData(buffer.data(), "PNG")
 
-                # Create a QtGui.QPixmap from the QtGui.QImage.
-                pixmap = QPixmap.fromImage(image)
+                    # Create a QtGui.QPixmap from the QtGui.QImage.
+                    pixmap = QPixmap.fromImage(image)
 
-                # Destroy the icons.
-                for iconList in icons:
-                    for icon in iconList:
-                        win32gui.DestroyIcon(icon)
-                icn = QIcon(pixmap)
+                    # Destroy the icons.
+                    for iconList in icons:
+                        for icon in iconList:
+                            win32gui.DestroyIcon(icon)
+                    icn = QIcon(pixmap)
+                except:
+                    pass
             self.tableWidget.setVerticalHeaderItem(apps, QTableWidgetItem())
             self.tableWidget.setItem(apps, 0, QTableWidgetItem(icn, self.app_list[apps][0]))
             self.tableWidget.setItem(apps, 1, QTableWidgetItem(self.app_list[apps][2]))
             self.tableWidget.setItem(apps, 2, QTableWidgetItem(self.app_list[apps][3]))
             self.tableWidget.setItem(apps, 3, QTableWidgetItem(self.app_list[apps][6]))
             self.tableWidget.setItem(apps, 4, QTableWidgetItem("Checking ..."))
+
+    def update_selection(self, __arg_1: QTableWidgetItem, __arg_2: QTableWidgetItem):
+        self.currentlySelected = __arg_1.row()
 
 
 if __name__ == "__main__":
