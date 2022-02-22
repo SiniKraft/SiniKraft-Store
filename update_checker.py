@@ -1,10 +1,11 @@
+import datetime
 import json
-import sys
-import urllib.request
 import os.path
+import urllib.request
 import winreg
 
-from PySide2.QtWidgets import QMessageBox, QDialog
+from PySide2.QtGui import QIcon, QPixmap
+from PySide2.QtWidgets import QMessageBox
 
 
 def find_apps():
@@ -40,7 +41,7 @@ def find_apps():
 
 def check_update_main():
     e = None
-    a = str()
+    a = {"": ""}
     try:
         with urllib.request.urlopen("https://raw.githubusercontent.com/SiniKraft/SiniKraft-Store/master/update.json") \
                 as url:
@@ -50,18 +51,71 @@ def check_update_main():
     return a, e
 
 
-def perform():
+def log(text: str):
+    with open("update_checker.log", "a") as file:
+        file.write(text)
+    change = False
+    with open("update_checker.log", "r") as file:
+        if file.readlines()[0][0] == '\n':
+            change = True
+            content = file.read()
+    if change:
+        with open("update_checker.log", "w") as file:
+            file.write(content[-1:])
+            file.close()
+
+
+def perform(parent=None, show_msg=False):
+    if os.path.isfile("update_checker.log"):
+        try:
+            os.remove("update_checker.log")
+        except:
+            pass
+    if parent is not None:
+        log("Starting Update Checking at %s from %s" % (datetime.datetime.now().isocalendar(), "SiniKraft STORE app"))
+    else:
+        log("Starting Update Checking at %s from %s" % (datetime.datetime.now().isocalendar(), "Update Checker Service"))
+    _continue = True
     result = check_update_main()
     if result[1] is not None:
-        msg = QMessageBox(QMessageBox.Critical)
-        msg.setText("An error occured while checking for updates : " + str(result[1]))
-        msg.exec_()
-        sys.exit(1)
-    json = result[0]
-    app_list = find_apps()
-    for x in range(0, len(app_list)):
-        if json[app_list[x][0]][0] != app_list[x][2]:
-            print(json[app_list[x][0]][0], app_list[x][2])
+        if show_msg:
+            msg = QMessageBox(parent)
+            msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
+            msg.setWindowTitle("Failed to Check for Updates !")
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("An error occured while checking for updates : " + str(result[1]))
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
+        log("\nError : " + str(result[1]))
+        _continue = False
+    if _continue:
+        json = result[0]
+        found = False
+        app_list = find_apps()
+        for x in range(0, len(app_list)):
+            if json[app_list[x][0]][0] != app_list[x][2]:
+                found = True
+                log("\nFound Update for %s : New version : %s, old : %s" % (app_list[x][0], json[app_list[x][0]][0],
+                                                                          app_list[x][2]))
+        if found and show_msg:
+            msg = QMessageBox(parent)
+            msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
+            msg.setWindowTitle("Updates Avaible !")
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("Updates were found ! Installing them now ...")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
+
+        if not found:
+            log("\nNo Updates !")
+            if show_msg:
+                msg = QMessageBox(parent)
+                msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
+                msg.setWindowTitle("No Updates Avaible !")
+                msg.setIcon(QMessageBox.Information)
+                msg.setText("No Updates were found ! You are up-to-date !")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.exec_()
 
 
 if __name__ == "__main__":

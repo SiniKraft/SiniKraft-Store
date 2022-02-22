@@ -14,7 +14,7 @@ from PySide2.QtWidgets import *  # type: ignore
 
 from PySide2.QtWebEngineWidgets import QWebEngineView
 
-import ui_sinikraft_launcher_rc
+import ui_sinikraft_launcher_rc  # type: ignore
 
 
 class Ui_MainWindow(object):

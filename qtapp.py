@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+import threading
 import winreg
 
 from urllib.parse import urlparse
@@ -11,11 +12,24 @@ import win32ui
 from PySide2.QtCore import Qt, QUrl, QSize, QBuffer, QIODevice
 from PySide2.QtGui import QDesktopServices, QIcon, QImage, QPixmap
 from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView
-from PySide2.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QAbstractItemView, QHeaderView
+from PySide2.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QAbstractItemView, QHeaderView, \
+    QMessageBox, QDialog, QDialogButtonBox
 
-from ui_sinikraft_launcher import Ui_MainWindow
+from ui_sinikraft_launcher import Ui_MainWindow as Ui_MainWindow
+from ui_settings_dialog import Ui_Dialog as Ui_SettingsDialog
 
-from update_checker import perform
+from update_checker import perform, check_update_main
+
+
+def get_targets(main_window: "MainWindow"):
+    result = check_update_main()
+    if result[1] is not None:
+        for x in range(main_window.tableWidget.rowCount()):
+            main_window.tableWidget.setItem(x, 4, QTableWidgetItem("Error"))
+    else:
+        json = result[0]
+        for x in range(main_window.tableWidget.rowCount()):
+            main_window.tableWidget.setItem(x, 4, QTableWidgetItem(json[main_window.tableWidget.item(x, 0).text()][0]))
 
 
 def find_apps():
@@ -90,7 +104,16 @@ class HtmlView2(QWebEngineView):
 
 def uninstall_app_from_gui(main_window: "MainWindow"):
     if main_window.currentlySelected is not None:
-        subprocess.Popen(main_window.app_list[main_window.currentlySelected][4])
+        try:
+            subprocess.Popen(main_window.app_list[main_window.currentlySelected][4])
+        except Exception as e:
+            msg = QMessageBox(main_window)
+            msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
+            msg.setWindowTitle("Failed to Uninstall App !")
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("An error occurred while uninstalling app : " + str(e))
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -110,10 +133,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.webEngineView.setZoomFactor(1.000000000000000)
         self.gridLayout.addWidget(self.webEngineView, 0, 0, 1, 1)
         self.currentlySelected = None
+        self.t1 = threading.Thread(target=get_targets, args=(self,))
+        self.t1.start()
 
         self.toolButton_2.clicked.connect(lambda: uninstall_app_from_gui(self))
         self.tableWidget.currentItemChanged.connect(self.update_selection)
-        self.toolButton_5.clicked.connect(perform)
+        self.toolButton_5.clicked.connect(lambda: perform(self, True))
+        self.toolButton_6.clicked.connect(lambda: SettingsDialog(self).exec_())
 
         self.tableWidget.setRowCount(len(self.app_list))
         self.tableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
@@ -171,6 +197,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def update_selection(self, __arg_1: QTableWidgetItem, __arg_2: QTableWidgetItem):
         self.currentlySelected = __arg_1.row()
+
+
+class SettingsDialog(QDialog, Ui_SettingsDialog):
+    def __init__(self, parent=None):
+        QDialog.__init__(self, parent=parent)
+        self.setupUi(self)
+        self.setWindowTitle("Automatic Update Settings")
+        btn = self.buttonBox.button(QDialogButtonBox.RestoreDefaults)
+        btn.clicked.connect(self.restore_defaults)
+
+    def restore_defaults(self):
+        self.checkBox_4.setChecked(True)
+        self.checkBox_5.setChecked(True)
+        self.checkBox_6.setChecked(True)
+        self.checkBox_7.setChecked(True)
+        self.checkBox_5.setDisabled(True)
+        self.checkBox.setChecked(True)
+        self.checkBox_2.setChecked(True)
+        self.checkBox_3.setChecked(True)
+        self.comboBox.setCurrentIndex(0)
 
 
 if __name__ == "__main__":
