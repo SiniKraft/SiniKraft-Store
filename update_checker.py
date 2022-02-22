@@ -72,9 +72,11 @@ def perform(parent=None, show_msg=False):
         except:
             pass
     if parent is not None:
-        log("Starting Update Checking at %s from %s" % (datetime.datetime.now().isocalendar(), "SiniKraft STORE app"))
+        to_write = ("Starting Update Checking at %s from %s" % (
+            datetime.datetime.now().isocalendar(), "SiniKraft STORE app"))
     else:
-        log("Starting Update Checking at %s from %s" % (datetime.datetime.now().isocalendar(), "Update Checker Service"))
+        to_write = ("Starting Update Checking at %s from %s" % (datetime.datetime.now().isocalendar(),
+                                                                "Update Checker Service"))
     _continue = True
     result = check_update_main()
     if result[1] is not None:
@@ -86,7 +88,7 @@ def perform(parent=None, show_msg=False):
             msg.setText("An error occured while checking for updates : " + str(result[1]))
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec_()
-        log("\nError : " + str(result[1]))
+        log(to_write + "\nError : " + str(result[1]))
         _continue = False
     if _continue:
         json = result[0]
@@ -95,8 +97,9 @@ def perform(parent=None, show_msg=False):
         for x in range(0, len(app_list)):
             if json[app_list[x][0]][0] != app_list[x][2]:
                 found = True
-                log("\nFound Update for %s : New version : %s, old : %s" % (app_list[x][0], json[app_list[x][0]][0],
-                                                                          app_list[x][2]))
+                log(to_write + "\nFound Update for %s : New version : %s, old : %s" % (
+                    app_list[x][0], json[app_list[x][0]][0],
+                    app_list[x][2]))
         if found and show_msg:
             msg = QMessageBox(parent)
             msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
@@ -107,7 +110,6 @@ def perform(parent=None, show_msg=False):
             msg.exec_()
 
         if not found:
-            log("\nNo Updates !")
             if show_msg:
                 msg = QMessageBox(parent)
                 msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
