@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'designerLYAiUo.ui'
+## Form generated from reading UI file 'settings_dialogYBFhXe.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.5
 ##
@@ -13,7 +13,6 @@ from PySide2.QtGui import *  # type: ignore
 from PySide2.QtWidgets import *  # type: ignore
 
 import ui_sinikraft_launcher_rc  # type: ignore
-
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -60,7 +59,9 @@ class Ui_Dialog(object):
 
         self.gridLayout.addWidget(self.checkBox_4, 0, 0, 1, 1)
 
+
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
+
 
         self.gridLayout_3.addWidget(self.groupBox, 0, 0, 1, 1)
 
@@ -88,7 +89,9 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addWidget(self.checkBox_3)
 
+
         self.gridLayout_4.addLayout(self.verticalLayout, 0, 0, 1, 1)
+
 
         self.gridLayout_3.addWidget(self.groupBox_2, 0, 1, 1, 1)
 
@@ -98,6 +101,7 @@ class Ui_Dialog(object):
         self.label.setObjectName(u"label")
 
         self.horizontalLayout.addWidget(self.label)
+
 
         self.gridLayout_3.addLayout(self.horizontalLayout, 1, 0, 1, 1)
 
@@ -112,16 +116,17 @@ class Ui_Dialog(object):
 
         self.gridLayout_3.addWidget(self.comboBox, 1, 1, 1, 1)
 
+
         self.gridLayout_5.addLayout(self.gridLayout_3, 0, 0, 1, 1)
 
         self.buttonBox = QDialogButtonBox(Dialog)
         self.buttonBox.setObjectName(u"buttonBox")
         self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(
-            QDialogButtonBox.Cancel | QDialogButtonBox.RestoreDefaults | QDialogButtonBox.Save)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.RestoreDefaults|QDialogButtonBox.Save)
         self.buttonBox.setCenterButtons(False)
 
         self.gridLayout_5.addWidget(self.buttonBox, 1, 0, 1, 1)
+
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
@@ -129,7 +134,6 @@ class Ui_Dialog(object):
         self.checkBox_3.toggled.connect(self.checkBox_5.setDisabled)
 
         QMetaObject.connectSlotsByName(Dialog)
-
     # setupUi
 
     def retranslateUi(self, Dialog):
@@ -139,9 +143,8 @@ class Ui_Dialog(object):
         self.checkBox_7.setText(QCoreApplication.translate("Dialog", u"Notifies when finished installing", None))
         self.checkBox_6.setText(QCoreApplication.translate("Dialog", u"Notifies when installing", None))
         self.checkBox_4.setText(QCoreApplication.translate("Dialog", u"Notifies when start downloading", None))
-        self.groupBox_2.setTitle(QCoreApplication.translate("Dialog", u"Automatisation", None))
-        self.checkBox.setText(
-            QCoreApplication.translate("Dialog", u"Enable Automatic Background Update Checking", None))
+        self.groupBox_2.setTitle(QCoreApplication.translate("Dialog", u"Automating", None))
+        self.checkBox.setText(QCoreApplication.translate("Dialog", u"Enable Automatic Background Update Checking", None))
         self.checkBox_2.setText(QCoreApplication.translate("Dialog", u"Download Updates Once Avaible", None))
         self.checkBox_3.setText(QCoreApplication.translate("Dialog", u"Install Updates Once Downloaded", None))
         self.label.setText(QCoreApplication.translate("Dialog", u"Update check frequency", None))
@@ -153,3 +156,4 @@ class Ui_Dialog(object):
         self.comboBox.setItemText(5, QCoreApplication.translate("Dialog", u"Check each months", None))
 
     # retranslateUi
+

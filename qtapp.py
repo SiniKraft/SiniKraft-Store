@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import sys
@@ -175,9 +176,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
         for apps in range(0, len(self.app_list)):
             icn = QIcon(QPixmap(u":/images/no_photo.png"))
-            if self.app_list[apps][1] != "":
+            path = self.app_list[apps][1]
+            if self.app_list[apps][0] == 'Discord Spammer':
+                path = 'C:\\Windows\\System32\\msiexec.exe'
+            if path != "":
                 try:
-                    icons = win32gui.ExtractIconEx(self.app_list[apps][1], 0)
+                    icons = win32gui.ExtractIconEx(path, 0)
                     icon = icons[0][0]
                     width = height = 32
 
@@ -229,8 +233,44 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         QDialog.__init__(self, parent=parent)
         self.setupUi(self)
         self.setWindowTitle("Automatic Update Settings")
-        btn = self.buttonBox.button(QDialogButtonBox.RestoreDefaults)
-        btn.clicked.connect(self.restore_defaults)
+        self.buttonBox.button(QDialogButtonBox.RestoreDefaults).clicked.connect(self.restore_defaults)
+        self.buttonBox.button(QDialogButtonBox.Save).clicked.connect(self.save)
+        self.load()
+
+    def load(self):
+        if not os.path.isfile("config.json"):
+            self.save()
+        try:
+            with open("config.json", "r") as file:
+                _dict = json.load(file)
+                self.checkBox.setChecked(bool(_dict["automating"]["enable_automating"]))
+                self.checkBox_2.setChecked(bool(_dict["automating"]["download_when_available"]))
+                self.checkBox_3.setChecked(bool(_dict["automating"]["install_when_downloaded"]))
+                self.checkBox_4.setChecked(bool(_dict["notifications"]["start_download"]))
+                self.checkBox_5.setChecked(bool(_dict["notifications"]["finish_download"]))
+                self.checkBox_6.setChecked(bool(_dict["notifications"]["start_install"]))
+                self.checkBox_7.setChecked(bool(_dict["notifications"]["finish_install"]))
+                self.comboBox.setCurrentIndex(int(_dict["frequency"]))
+        except Exception as e:
+            msg = QMessageBox(self)
+            msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
+            msg.setWindowTitle("Failed to load Settings !")
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("An error occured while loading Settings : " + str(e))
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
+
+    def save(self):
+        with open("config.json", "w") as file:
+            _dict = {"notifications": {"start_download": self.checkBox_4.isChecked(),
+                                       "finish_download": self.checkBox_5.isChecked(),
+                                       "start_install": self.checkBox_6.isChecked(),
+                                       "finish_install": self.checkBox_7.isChecked()},
+                     "automating": {"enable_automating": self.checkBox.isChecked(),
+                                    "download_when_available": self.checkBox_2.isChecked(),
+                                    "install_when_downloaded": self.checkBox_3.isChecked()},
+                     "frequency": self.comboBox.currentIndex()}
+            json.dump(_dict, file, indent=4)
 
     def restore_defaults(self):
         self.checkBox_4.setChecked(True)
