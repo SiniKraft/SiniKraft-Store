@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'settings_dialogYBFhXe.ui'
+## Form generated from reading UI file 'settings_dialogXXWdhK.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.5
 ##
@@ -73,6 +73,7 @@ class Ui_Dialog(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.checkBox = QCheckBox(self.groupBox_2)
         self.checkBox.setObjectName(u"checkBox")
+        self.checkBox.setEnabled(True)
         self.checkBox.setChecked(True)
 
         self.verticalLayout.addWidget(self.checkBox)
@@ -132,6 +133,7 @@ class Ui_Dialog(object):
         self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
         self.checkBox_3.toggled.connect(self.checkBox_5.setDisabled)
+        self.checkBox.toggled.connect(self.comboBox.setEnabled)
 
         QMetaObject.connectSlotsByName(Dialog)
     # setupUi

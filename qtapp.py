@@ -3,11 +3,13 @@ import os
 import subprocess
 import sys
 import threading
+import datetime
 
 from urllib.parse import urlparse
 
 import win32gui
 import win32ui
+import win32com.client
 
 from PySide2.QtCore import Qt, QUrl, QSize, QBuffer, QIODevice
 from PySide2.QtGui import QDesktopServices, QIcon, QImage, QPixmap
@@ -18,7 +20,7 @@ from PySide2.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QAbst
 from ui_sinikraft_launcher import Ui_MainWindow as Ui_MainWindow
 from ui_settings_dialog import Ui_Dialog as Ui_SettingsDialog
 
-from update_checker import run, check_update_main, find_apps
+from update_checker import run, check_update_main, find_apps, get_tasks
 
 
 def get_targets(main_window: "MainWindow"):
@@ -39,6 +41,64 @@ def get_targets(main_window: "MainWindow"):
 def find_domain(url: QUrl):
     url = url.url()
     return urlparse(url).netloc
+
+
+def set_automation():
+    scheduler = win32com.client.Dispatch('Schedule.Service')
+    scheduler.Connect()
+    root_folder = scheduler.GetFolder('\\')
+    task_def = scheduler.NewTask(0)
+
+    # Create trigger
+    start_time = datetime.datetime.now() + datetime.timedelta(minutes=5)
+    TASK_TRIGGER_TIME = 1
+    trigger = task_def.Triggers.Create(TASK_TRIGGER_TIME)
+    trigger.StartBoundary = start_time.isoformat()
+
+    # Create action
+    TASK_ACTION_EXEC = 0
+    action = task_def.Actions.Create(TASK_ACTION_EXEC)
+    action.ID = 'DO NOTHING'
+    action.Path = 'cmd.exe'
+    action.Arguments = '/c "exit"'
+
+    # Set parameters
+    task_def.RegistrationInfo.Description = 'Test Task'
+    task_def.Settings.Enabled = True
+    task_def.Settings.StopIfGoingOnBatteries = False
+
+    # Register task
+    # If task already exists, it will be updated
+    TASK_CREATE_OR_UPDATE = 6
+    TASK_LOGON_NONE = 0
+    root_folder.RegisterTaskDefinition(
+        'Test Task',  # Task name
+        task_def,
+        TASK_CREATE_OR_UPDATE,
+        '',  # No user
+        '',  # No password
+        TASK_LOGON_NONE)
+
+
+def find_current_task(__win):
+    _msg = "Background Update is performing. If you don't see a SiniKraft STORE icon in the tray apps area (near Noti" \
+           "fications) after you closed the SiniKraft STORE window, Click on Check for Updates on this window."
+    msg2 = ""
+    _tsk = get_tasks()
+    if _tsk["current_task"] is not None:
+        if _tsk["current_task"] == 1:
+            msg2 = "Current task : Downloading"
+        elif _tsk["current_task"] == 2:
+            msg2 = "Current task : Uninstalling"
+        elif _tsk["current_task"] == 3:
+            msg2 = "Current task : Installing"
+    msg = QMessageBox(__win)
+    msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
+    msg.setWindowTitle("An Update is running ...")
+    msg.setIcon(QMessageBox.Information)
+    msg.setText(_msg + "\n" + msg2)
+    msg.setStandardButtons(QMessageBox.Ok)
+    msg.exec_()
 
 
 class WebEnginePage(QWebEnginePage):
@@ -177,6 +237,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def check_update(self):
         p = threading.Thread(target=run, args=(self, True,))
         p.start()
+        self.close()
+
+    def show(self):
+        super(MainWindow, self).show()
+        if os.path.isfile("checking"):
+            find_current_task(self)
 
 
 class SettingsDialog(QDialog, Ui_SettingsDialog):

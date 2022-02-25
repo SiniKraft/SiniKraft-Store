@@ -104,6 +104,9 @@
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <widget class="QCheckBox" name="checkBox">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
             <property name="text">
              <string>Enable Automatic Background Update Checking</string>
             </property>
@@ -248,6 +251,22 @@
     <hint type="destinationlabel">
      <x>144</x>
      <y>71</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>comboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>420</x>
+     <y>52</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>420</x>
+     <y>164</y>
     </hint>
    </hints>
   </connection>

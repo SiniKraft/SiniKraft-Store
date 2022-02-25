@@ -105,10 +105,15 @@ def get_tasks():
 
 
 def perform(parent=None, show_msg=False):
+    with open("checking", "w") as file:
+        file.write("\n")
+        file.close()
+    parent = None
+    show_msg = False
     if os.path.isfile("update_checker.log"):
         try:
             os.remove("update_checker.log")
-        except:
+        except Exception as e:
             pass
     if parent is not None:
         to_write = ("Starting Update Checking at %s from %s" % (
@@ -144,15 +149,14 @@ def perform(parent=None, show_msg=False):
                 __dict = get_tasks()
                 __dict["queued_work"].append(_u)
                 write_to_task(__dict)
-    # if found and show_msg:
-            # TODO: Spawn msgbox from main thread
-            # msg = QMessageBox(parent)
-            # msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
-            # msg.setWindowTitle("Updates Avaible !")
-            # msg.setIcon(QMessageBox.Information)
-            # msg.setText("Updates were found ! Installing them now ...")
-            # msg.setStandardButtons(QMessageBox.Ok)
-            # msg.exec_()
+        if found and show_msg:
+            msg = QMessageBox(parent)
+            msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
+            msg.setWindowTitle("Updates Avaible !")
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("Updates were found ! Installing them now ...")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
 
         if not found:
             if show_msg:
@@ -274,7 +278,6 @@ def process(dict_: dict):
 
     if dict_["current_state"] == 3:
         extension = dict_["current_task"][4][:-1][-4:]
-        print(extension)
         if extension == ".exe":
             path = os.path.expandvars("%TEMP%") + "\\" + "tmp_installer.exe"
         else:
@@ -290,6 +293,10 @@ def process(dict_: dict):
         __tmp_name__ = dict_["current_task"][0]
         dict_["current_task"] = None
         write_to_task(dict_)
+        try:
+            os.remove("checking")
+        except FileNotFoundError:
+            pass
         if params_dict["notifications"]["finish_install"]:
             notifies("Finished Updating", "%s is now Updated ! Enjoy !" % __tmp_name__)
             time.sleep(10)
