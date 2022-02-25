@@ -3,7 +3,6 @@ import os
 import subprocess
 import sys
 import threading
-import winreg
 
 from urllib.parse import urlparse
 
@@ -14,12 +13,12 @@ from PySide2.QtCore import Qt, QUrl, QSize, QBuffer, QIODevice
 from PySide2.QtGui import QDesktopServices, QIcon, QImage, QPixmap
 from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView
 from PySide2.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QAbstractItemView, QHeaderView, \
-    QMessageBox, QDialog, QDialogButtonBox
+    QMessageBox, QDialog, QDialogButtonBox, QSystemTrayIcon
 
 from ui_sinikraft_launcher import Ui_MainWindow as Ui_MainWindow
 from ui_settings_dialog import Ui_Dialog as Ui_SettingsDialog
 
-from update_checker import perform, check_update_main
+from update_checker import run, check_update_main, find_apps
 
 
 def get_targets(main_window: "MainWindow"):
@@ -35,58 +34,6 @@ def get_targets(main_window: "MainWindow"):
                                                                        [0]))
             except KeyError:
                 main_window.tableWidget.setItem(x, 4, QTableWidgetItem("Unknown"))
-
-
-def find_apps():
-    app_list = []
-    hkeys = [winreg.HKEY_CURRENT_USER, winreg.HKEY_LOCAL_MACHINE]
-    for hkey in hkeys:
-        with winreg.OpenKey(hkey, r"Software\Microsoft\Windows\CurrentVersion\Uninstall") as h_apps:
-            for idx in range(winreg.QueryInfoKey(h_apps)[0]):
-                try:
-                    with winreg.OpenKeyEx(h_apps, winreg.EnumKey(h_apps, idx)) as h_app_info:
-                        def get_value(key):
-                            try:
-                                return winreg.QueryValueEx(h_app_info, key)[0]
-                            except Exception as e:
-                                return ""
-
-                        if get_value("Publisher") == "SiniKraft" or get_value("Publisher") == "Nicklor":
-                            installer_path = get_value("InstallLocation")
-                            if os.path.exists(str(installer_path)):
-                                try:
-                                    icon_str = get_value("DisplayIcon")
-                                except Exception as e:
-                                    icon_str = ""
-                                date = get_value("InstallDate")
-                                date = date[6] + date[7] + "/" + date[4] + date[5] + "/" + date[0] + date[1] + \
-                                       date[2] + date[3]
-                                app_list.append((get_value("DisplayName").split(" version")[0], icon_str,
-                                                 get_value("DisplayVersion"), date,
-                                                 get_value("UninstallString"), get_value("QuietUninstallString"),
-                                                 (str(round(get_value("EstimatedSize") / 1024, 2)) + " Mo")
-                                                 .replace(".", ",")))
-                        elif get_value("Publisher") == "UNKNOWN":
-                            if get_value("DisplayName") == "Discord Spammer":
-                                installer_path = get_value("InstallLocation")
-                                if os.path.exists(str(installer_path)):
-                                    try:
-                                        icon_str = get_value("DisplayIcon")
-                                    except Exception as e:
-                                        icon_str = ""
-                                date = get_value("InstallDate")
-                                date = date[6] + date[7] + "/" + date[4] + date[5] + "/" + date[0] + date[1] + \
-                                       date[2] + date[3]
-                                app_list.append((get_value("DisplayName").split(" version")[0], icon_str,
-                                                 get_value("DisplayVersion"), date,
-                                                 get_value("UninstallString"), get_value("QuietUninstallString"),
-                                                 (str(round(get_value("EstimatedSize") / 1024, 2)) + " Mo")
-                                                 .replace(".", ",")))
-
-                except (WindowsError, KeyError, ValueError):
-                    continue
-
-    return app_list
 
 
 def find_domain(url: QUrl):
@@ -122,7 +69,7 @@ class HtmlView(QWebEngineView):
 class HtmlView2(QWebEngineView):
     def __init__(self, *args, **kwargs):
         QWebEngineView.__init__(self, *args, **kwargs)
-        self.urlChanged.connect(lambda: self.open_url)
+        self.urlChanged.connect(self.open_url)
 
     def open_url(self):
         QDesktopServices.openUrl(self.url())
@@ -164,7 +111,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.toolButton_2.clicked.connect(lambda: uninstall_app_from_gui(self))
         self.tableWidget.currentItemChanged.connect(self.update_selection)
-        self.toolButton_5.clicked.connect(lambda: perform(self, True))
+        self.toolButton_5.clicked.connect(self.check_update)
         self.toolButton_6.clicked.connect(lambda: SettingsDialog(self).exec_())
 
         self.tableWidget.setRowCount(len(self.app_list))
@@ -227,6 +174,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_selection(self, __arg_1: QTableWidgetItem, __arg_2: QTableWidgetItem):
         self.currentlySelected = __arg_1.row()
 
+    def check_update(self):
+        p = threading.Thread(target=run, args=(self, True,))
+        p.start()
+
 
 class SettingsDialog(QDialog, Ui_SettingsDialog):
     def __init__(self, parent=None):
@@ -288,5 +239,10 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setAttribute(Qt.AA_DisableWindowContextHelpButton)
     win = MainWindow()
+    icon = QIcon(":/images/SiniKraft-STORE-icon.png")
+    tray = QSystemTrayIcon()
+    tray.setIcon(icon)
+    tray.setVisible(True)
+    tray.setToolTip("SiniKraft STORE")
     win.show()
     sys.exit(app.exec_())
