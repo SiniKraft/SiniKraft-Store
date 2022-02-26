@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import subprocess
 import sys
 import threading
@@ -15,7 +16,7 @@ from PySide2.QtCore import Qt, QUrl, QSize, QBuffer, QIODevice
 from PySide2.QtGui import QDesktopServices, QIcon, QImage, QPixmap
 from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView
 from PySide2.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QAbstractItemView, QHeaderView, \
-    QMessageBox, QDialog, QDialogButtonBox, QSystemTrayIcon
+    QMessageBox, QDialog, QDialogButtonBox, QSystemTrayIcon, QFileDialog
 
 from ui_sinikraft_launcher import Ui_MainWindow as Ui_MainWindow
 from ui_settings_dialog import Ui_Dialog as Ui_SettingsDialog
@@ -171,6 +172,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.toolButton_2.clicked.connect(lambda: uninstall_app_from_gui(self))
         self.tableWidget.currentItemChanged.connect(self.update_selection)
+        self.toolButton_3.clicked.connect(lambda: self.handle_save_data(1))
+        self.toolButton_4.clicked.connect(lambda: self.handle_save_data(0))
         self.toolButton_5.clicked.connect(self.check_update)
         self.toolButton_6.clicked.connect(lambda: SettingsDialog(self).exec_())
 
@@ -243,6 +246,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super(MainWindow, self).show()
         if os.path.isfile("checking"):
             find_current_task(self)
+
+    def handle_save_data(self, _type: int):
+        # Type 0 : Export Save
+        # Type 1 : Import Save
+        game_title = self.app_list[self.currentlySelected][0]
+        if game_title == "NoMoskito!" or game_title == "Gob Fish":
+            if self.app_list[self.currentlySelected][4][-23:] == "Uninstall\\unins000.exe\"":
+                game_unins = self.app_list[self.currentlySelected][4][:-23][1:] + 'save.dat'
+            else:
+                game_unins = self.app_list[self.currentlySelected][4][:-13][1:] + 'save\\save.dat'
+            if _type == 0:
+                state = "exported"
+                dlg = QFileDialog.getSaveFileName(self, "Export Save data of %s" % game_title, "save.dat", "%s Save data file (*.dat)" % game_title)[0]
+                shutil.copyfile(game_unins, dlg)
+            else:
+                state = "imported"
+                dlg = QFileDialog.getOpenFileName(self, "Import Save data of %s" % game_title, "save.dat",
+                                                  "%s Save data file (*.dat)" % game_title)[0]
+                shutil.copyfile(dlg, game_unins)
+            msg = QMessageBox(self)
+            msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
+            msg.setWindowTitle("Successfully %s Save Data !" % state)
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("The save data of %s was successfully %s" % (game_title, state))
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
+        else:
+            msg = QMessageBox(self)
+            msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
+            msg.setWindowTitle("Invalid Title Selected !")
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("The save data of this app can't be imported/exported !")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
 
 
 class SettingsDialog(QDialog, Ui_SettingsDialog):
