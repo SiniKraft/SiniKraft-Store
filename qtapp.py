@@ -5,14 +5,16 @@ import subprocess
 import sys
 import threading
 import datetime
+import getpass
 
 from urllib.parse import urlparse
 
 import win32gui
 import win32ui
+import win32security
 import win32com.client
 
-from PySide2.QtCore import Qt, QUrl, QSize, QBuffer, QIODevice
+from PySide2.QtCore import Qt, QUrl, QSize, QBuffer, QIODevice, QTime
 from PySide2.QtGui import QDesktopServices, QIcon, QImage, QPixmap
 from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView
 from PySide2.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QAbstractItemView, QHeaderView, \
@@ -22,6 +24,7 @@ from ui_sinikraft_launcher import Ui_MainWindow as Ui_MainWindow
 from ui_settings_dialog import Ui_Dialog as Ui_SettingsDialog
 
 from update_checker import run, check_update_main, find_apps, get_tasks
+from constants import *
 
 
 def get_targets(main_window: "MainWindow"):
@@ -44,36 +47,86 @@ def find_domain(url: QUrl):
     return urlparse(url).netloc
 
 
-def set_automation():
+def set_automation(num: int, hour: int, minute: int):
     scheduler = win32com.client.Dispatch('Schedule.Service')
     scheduler.Connect()
     root_folder = scheduler.GetFolder('\\')
     task_def = scheduler.NewTask(0)
 
     # Create trigger
-    start_time = datetime.datetime.now() + datetime.timedelta(minutes=5)
-    TASK_TRIGGER_TIME = 1
-    trigger = task_def.Triggers.Create(TASK_TRIGGER_TIME)
-    trigger.StartBoundary = start_time.isoformat()
+    start_time = datetime.datetime.now()
+    start_time = start_time.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    start_time = start_time.isoformat()
+
+    trigger = task_def.Triggers.Create(TASK_TRIGGER_DAILY)
+    trigger.DaysInterval = 1  # 1 day per day
+    trigger.StartBoundary = start_time
+    trigger.Enabled = False
+
+    trigger_2 = task_def.Triggers.Create(TASK_TRIGGER_WEEKLY)
+    trigger_2.DaysOfWeek = DAY_MONDAY
+    trigger_2.WeeksInterval = 1
+    trigger_2.StartBoundary = start_time
+    trigger_2.Enabled = False
+
+    trigger_3 = task_def.Triggers.Create(TASK_TRIGGER_MONTHLY)
+    trigger_3.DaysOfMonth = 1
+    trigger_3.MonthsOfYear = ALL_MONTHS
+    trigger_3.StartBoundary = start_time
+    trigger_3.Enabled = False
+
+    trigger_4 = task_def.Triggers.Create(TASK_TRIGGER_LOGON)
+    trigger_4.Delay = "PT1M"  # 1 minute
+    trigger_4.Enabled = False
+
+    desc = win32security.GetFileSecurity(
+        ".", win32security.OWNER_SECURITY_INFORMATION
+    )
+    sid = desc.GetSecurityDescriptorOwner()
+
+    sid_str = win32security.ConvertSidToStringSid(sid)
+    trigger_4.UserId = sid_str
+    trigger_4.StartBoundary = start_time
 
     # Create action
-    TASK_ACTION_EXEC = 0
     action = task_def.Actions.Create(TASK_ACTION_EXEC)
     action.ID = 'DO NOTHING'
     action.Path = 'cmd.exe'
     action.Arguments = '/c "exit"'
 
+    if num == 0:  # Check each day + on session login
+        trigger.Enabled = True
+        trigger_4.Enabled = True
+    elif num == 1:  # Check each week + on session login
+        trigger_2.Enabled = True
+        trigger_4.Enabled = True
+    elif num == 2:  # Check on session login
+        trigger_4.Enabled = True
+    elif num == 3:   # Check each day
+        trigger.Enabled = True
+    elif num == 4:   # Check each week
+        trigger_2.Enabled = True
+    elif num == 5:   # Check each month
+        trigger_3.Enabled = True
+
     # Set parameters
-    task_def.RegistrationInfo.Description = 'Test Task'
+    task_def.RegistrationInfo.Description = 'SiniKraft STORE Automatic Update Task. Disable it in Update Settings, in' \
+                                            ' the Application !'
+    task_def.RegistrationInfo.Author = getpass.getuser() + " | SiniKraft STORE"
+    task_def.RegistrationInfo.Date = start_time
+    task_def.RegistrationInfo.Source = "SiniKraft STORE"
     task_def.Settings.Enabled = True
     task_def.Settings.StopIfGoingOnBatteries = False
+    task_def.Settings.RunOnlyIfNetworkAvailable = True
+    task_def.Settings.DisallowStartIfOnBatteries = False
+    task_def.Settings.MultipleInstances = 2  # TASK_INSTANCES_IGNORE_NEW - doesn't create if already running
+    task_def.Principal.UserId = sid_str
+    task_def.Principal.RunLevel = 0  # Low
 
     # Register task
     # If task already exists, it will be updated
-    TASK_CREATE_OR_UPDATE = 6
-    TASK_LOGON_NONE = 0
     root_folder.RegisterTaskDefinition(
-        'Test Task',  # Task name
+        'SiniKraft STORE Background Update Checking',  # Task name
         task_def,
         TASK_CREATE_OR_UPDATE,
         '',  # No user
@@ -192,7 +245,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if path != "":
                 try:
                     icons = win32gui.ExtractIconEx(path, 0)
-                    icon = icons[0][0]
+                    _icon = icons[0][0]
                     width = height = 32
 
                     # Create DC and bitmap and make them compatible.
@@ -203,7 +256,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     hdc.SelectObject(hbmp)
 
                     # Draw the icon.
-                    win32gui.DrawIconEx(hdc.GetHandleOutput(), 0, 0, icon, width, height, 0, None, 0x0003)
+                    win32gui.DrawIconEx(hdc.GetHandleOutput(), 0, 0, _icon, width, height, 0, None, 0x0003)
 
                     # Get the icon's bits and convert to a QtGui.QImage.
                     bitmapbits = hbmp.GetBitmapBits(True)
@@ -222,8 +275,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                     # Destroy the icons.
                     for iconList in icons:
-                        for icon in iconList:
-                            win32gui.DestroyIcon(icon)
+                        for __icon in iconList:
+                            win32gui.DestroyIcon(__icon)
                     icn = QIcon(pixmap)
                 except:
                     pass
@@ -258,7 +311,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 game_unins = self.app_list[self.currentlySelected][4][:-13][1:] + 'save\\save.dat'
             if _type == 0:
                 state = "exported"
-                dlg = QFileDialog.getSaveFileName(self, "Export Save data of %s" % game_title, "save.dat", "%s Save data file (*.dat)" % game_title)[0]
+                dlg = QFileDialog.getSaveFileName(self, "Export Save data of %s" % game_title, "save.dat",
+                                                  "%s Save data file (*.dat)" % game_title)[0]
                 shutil.copyfile(game_unins, dlg)
             else:
                 state = "imported"
@@ -305,6 +359,9 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
                 self.checkBox_6.setChecked(bool(_dict["notifications"]["start_install"]))
                 self.checkBox_7.setChecked(bool(_dict["notifications"]["finish_install"]))
                 self.comboBox.setCurrentIndex(int(_dict["frequency"]))
+                time = QTime().currentTime()
+                time.setHMS(int(_dict["time"]["hour"]), int(_dict["time"]["minute"]), 0, 0)
+                self.timeEdit.setTime(time)
         except Exception as e:
             msg = QMessageBox(self)
             msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
@@ -315,6 +372,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             msg.exec_()
 
     def save(self):
+        time = self.timeEdit.time()
         with open("config.json", "w") as file:
             _dict = {"notifications": {"start_download": self.checkBox_4.isChecked(),
                                        "finish_download": self.checkBox_5.isChecked(),
@@ -323,10 +381,15 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
                      "automating": {"enable_automating": self.checkBox.isChecked(),
                                     "download_when_available": self.checkBox_2.isChecked(),
                                     "install_when_downloaded": self.checkBox_3.isChecked()},
-                     "frequency": self.comboBox.currentIndex()}
+                     "frequency": self.comboBox.currentIndex(),
+                     "time": {'hour': time.hour(), "minute": time.minute()}}
             json.dump(_dict, file, indent=4)
+            set_automation(self.comboBox.currentIndex(), time.hour(), time.minute())
 
     def restore_defaults(self):
+        time = QTime().currentTime()
+        time.setHMS(0, 0, 0, 0)
+        self.timeEdit.setTime(time)
         self.checkBox_4.setChecked(True)
         self.checkBox_5.setChecked(True)
         self.checkBox_6.setChecked(True)

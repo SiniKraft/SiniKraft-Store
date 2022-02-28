@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'settings_dialogXXWdhK.ui'
+## Form generated from reading UI file 'settings_dialogziZIJv.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.5
 ##
@@ -24,8 +24,58 @@ class Ui_Dialog(object):
         Dialog.setModal(False)
         self.gridLayout_5 = QGridLayout(Dialog)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
+        self.buttonBox = QDialogButtonBox(Dialog)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.RestoreDefaults|QDialogButtonBox.Save)
+        self.buttonBox.setCenterButtons(False)
+
+        self.gridLayout_5.addWidget(self.buttonBox, 3, 0, 1, 1)
+
         self.gridLayout_3 = QGridLayout()
         self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.comboBox = QComboBox(Dialog)
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.setObjectName(u"comboBox")
+
+        self.gridLayout_3.addWidget(self.comboBox, 1, 1, 1, 1)
+
+        self.groupBox_2 = QGroupBox(Dialog)
+        self.groupBox_2.setObjectName(u"groupBox_2")
+        self.gridLayout_4 = QGridLayout(self.groupBox_2)
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.checkBox = QCheckBox(self.groupBox_2)
+        self.checkBox.setObjectName(u"checkBox")
+        self.checkBox.setEnabled(True)
+        self.checkBox.setChecked(True)
+
+        self.verticalLayout.addWidget(self.checkBox)
+
+        self.checkBox_2 = QCheckBox(self.groupBox_2)
+        self.checkBox_2.setObjectName(u"checkBox_2")
+        self.checkBox_2.setChecked(True)
+
+        self.verticalLayout.addWidget(self.checkBox_2)
+
+        self.checkBox_3 = QCheckBox(self.groupBox_2)
+        self.checkBox_3.setObjectName(u"checkBox_3")
+        self.checkBox_3.setChecked(True)
+
+        self.verticalLayout.addWidget(self.checkBox_3)
+
+
+        self.gridLayout_4.addLayout(self.verticalLayout, 0, 0, 1, 1)
+
+
+        self.gridLayout_3.addWidget(self.groupBox_2, 0, 1, 1, 1)
+
         self.groupBox = QGroupBox(Dialog)
         self.groupBox.setObjectName(u"groupBox")
         self.groupBox.setMinimumSize(QSize(269, 139))
@@ -65,37 +115,6 @@ class Ui_Dialog(object):
 
         self.gridLayout_3.addWidget(self.groupBox, 0, 0, 1, 1)
 
-        self.groupBox_2 = QGroupBox(Dialog)
-        self.groupBox_2.setObjectName(u"groupBox_2")
-        self.gridLayout_4 = QGridLayout(self.groupBox_2)
-        self.gridLayout_4.setObjectName(u"gridLayout_4")
-        self.verticalLayout = QVBoxLayout()
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.checkBox = QCheckBox(self.groupBox_2)
-        self.checkBox.setObjectName(u"checkBox")
-        self.checkBox.setEnabled(True)
-        self.checkBox.setChecked(True)
-
-        self.verticalLayout.addWidget(self.checkBox)
-
-        self.checkBox_2 = QCheckBox(self.groupBox_2)
-        self.checkBox_2.setObjectName(u"checkBox_2")
-        self.checkBox_2.setChecked(True)
-
-        self.verticalLayout.addWidget(self.checkBox_2)
-
-        self.checkBox_3 = QCheckBox(self.groupBox_2)
-        self.checkBox_3.setObjectName(u"checkBox_3")
-        self.checkBox_3.setChecked(True)
-
-        self.verticalLayout.addWidget(self.checkBox_3)
-
-
-        self.gridLayout_4.addLayout(self.verticalLayout, 0, 0, 1, 1)
-
-
-        self.gridLayout_3.addWidget(self.groupBox_2, 0, 1, 1, 1)
-
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.label = QLabel(Dialog)
@@ -106,27 +125,26 @@ class Ui_Dialog(object):
 
         self.gridLayout_3.addLayout(self.horizontalLayout, 1, 0, 1, 1)
 
-        self.comboBox = QComboBox(Dialog)
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.setObjectName(u"comboBox")
+        self.label_2 = QLabel(Dialog)
+        self.label_2.setObjectName(u"label_2")
 
-        self.gridLayout_3.addWidget(self.comboBox, 1, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.label_2, 2, 0, 1, 1)
+
+        self.timeEdit = QTimeEdit(Dialog)
+        self.timeEdit.setObjectName(u"timeEdit")
+        self.timeEdit.setWrapping(False)
+        self.timeEdit.setFrame(True)
+        self.timeEdit.setButtonSymbols(QAbstractSpinBox.UpDownArrows)
+        self.timeEdit.setAccelerated(True)
+        self.timeEdit.setCorrectionMode(QAbstractSpinBox.CorrectToNearestValue)
+        self.timeEdit.setProperty("showGroupSeparator", False)
+        self.timeEdit.setCalendarPopup(False)
+        self.timeEdit.setTimeSpec(Qt.LocalTime)
+
+        self.gridLayout_3.addWidget(self.timeEdit, 2, 1, 1, 1)
 
 
         self.gridLayout_5.addLayout(self.gridLayout_3, 0, 0, 1, 1)
-
-        self.buttonBox = QDialogButtonBox(Dialog)
-        self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.RestoreDefaults|QDialogButtonBox.Save)
-        self.buttonBox.setCenterButtons(False)
-
-        self.gridLayout_5.addWidget(self.buttonBox, 1, 0, 1, 1)
 
 
         self.retranslateUi(Dialog)
@@ -140,22 +158,23 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
+        self.comboBox.setItemText(0, QCoreApplication.translate("Dialog", u"Check each day + on session login", None))
+        self.comboBox.setItemText(1, QCoreApplication.translate("Dialog", u"Check each week + on session login", None))
+        self.comboBox.setItemText(2, QCoreApplication.translate("Dialog", u"Check on session login", None))
+        self.comboBox.setItemText(3, QCoreApplication.translate("Dialog", u"Check each day", None))
+        self.comboBox.setItemText(4, QCoreApplication.translate("Dialog", u"Check each week", None))
+        self.comboBox.setItemText(5, QCoreApplication.translate("Dialog", u"Check each month", None))
+
+        self.groupBox_2.setTitle(QCoreApplication.translate("Dialog", u"Automating", None))
+        self.checkBox.setText(QCoreApplication.translate("Dialog", u"Enable Automatic Background Update Checking", None))
+        self.checkBox_2.setText(QCoreApplication.translate("Dialog", u"Download Updates Once Avaible", None))
+        self.checkBox_3.setText(QCoreApplication.translate("Dialog", u"Install Updates Once Downloaded", None))
         self.groupBox.setTitle(QCoreApplication.translate("Dialog", u"Notifications", None))
         self.checkBox_5.setText(QCoreApplication.translate("Dialog", u"Notifies when download finished", None))
         self.checkBox_7.setText(QCoreApplication.translate("Dialog", u"Notifies when finished installing", None))
         self.checkBox_6.setText(QCoreApplication.translate("Dialog", u"Notifies when installing", None))
         self.checkBox_4.setText(QCoreApplication.translate("Dialog", u"Notifies when start downloading", None))
-        self.groupBox_2.setTitle(QCoreApplication.translate("Dialog", u"Automating", None))
-        self.checkBox.setText(QCoreApplication.translate("Dialog", u"Enable Automatic Background Update Checking", None))
-        self.checkBox_2.setText(QCoreApplication.translate("Dialog", u"Download Updates Once Avaible", None))
-        self.checkBox_3.setText(QCoreApplication.translate("Dialog", u"Install Updates Once Downloaded", None))
         self.label.setText(QCoreApplication.translate("Dialog", u"Update check frequency", None))
-        self.comboBox.setItemText(0, QCoreApplication.translate("Dialog", u"Check each day + on session login", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("Dialog", u"Check each hour + on session login", None))
-        self.comboBox.setItemText(2, QCoreApplication.translate("Dialog", u"Check on session login", None))
-        self.comboBox.setItemText(3, QCoreApplication.translate("Dialog", u"Check each day", None))
-        self.comboBox.setItemText(4, QCoreApplication.translate("Dialog", u"Check each hour", None))
-        self.comboBox.setItemText(5, QCoreApplication.translate("Dialog", u"Check each months", None))
-
+        self.label_2.setText(QCoreApplication.translate("Dialog", u"Time of the day to check (Except on session login)", None))
     # retranslateUi
 
