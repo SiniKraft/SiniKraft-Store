@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'add_app_dialognjvbtd.ui'
+## Form generated from reading UI file 'add_app_dialogbeAkUl.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.5
 ##
@@ -20,7 +20,9 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(640, 480)
+        Dialog.resize(636, 500)
+        Dialog.setMinimumSize(QSize(636, 500))
+        Dialog.setMaximumSize(QSize(636, 500))
         self.verticalLayout_2 = QVBoxLayout(Dialog)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout = QVBoxLayout()
@@ -46,7 +48,7 @@ class Ui_Dialog(object):
         self.gridLayout.setContentsMargins(1, 1, 1, 1)
         self.webEngineView = QWebEngineView(self.groupBox)
         self.webEngineView.setObjectName(u"webEngineView")
-        self.webEngineView.setUrl(QUrl(u"https://duckduckgo.com/"))
+        self.webEngineView.setUrl(QUrl(u"about:blank"))
 
         self.gridLayout.addWidget(self.webEngineView, 1, 0, 1, 1)
 
