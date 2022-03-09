@@ -361,7 +361,8 @@ class AddAppDialog(QDialog, Ui_AddAppDialog):
         self.webEngineView = HtmlView(self.groupBox)
         self.webEngineView.setObjectName(u"webEngineView")
         self.gridLayout.addWidget(self.webEngineView, 1, 0, 1, 1)
-        self.webEngineView.setUrl(QUrl("file:///C:/Users/TheKing/Desktop/PLEAAAASE/list_main.html"))
+        self.webEngineView.setUrl(QUrl("https://sinikraft.github.io/website/api/SiniKraft-STORE/add-app-dialog/list_mai"
+                                       "n.html#"))
 
 
 class SettingsDialog(QDialog, Ui_SettingsDialog):
