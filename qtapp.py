@@ -209,6 +209,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QMainWindow.__init__(self)
         self.setupUi(self)
         self.app_list = find_apps()
+        print(self.app_list)
         self.setWindowTitle("SiniKraft STORE")
         self.setWindowIcon(QIcon(QPixmap(u":/images/SiniKraft-STORE-icon.png")))
         self.webEngineView = None
@@ -217,8 +218,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.webEngineView.setEnabled(True)
         self.webEngineView.setMinimumSize(QSize(0, 150))
         self.webEngineView.setMaximumSize(QSize(400, 16777215))
-        self.webEngineView.setUrl(QUrl(u"https://sinikraft.github.io/website/fr/"))
-        self.webEngineView.setZoomFactor(1.000000000000000)
+        self.webEngineView.setUrl(QUrl(u"https://sinikraft.github.io/website/api/SiniKraft-STORE/news-channel/main_test"
+                                       u".html"))
+        self.webEngineView.setZoomFactor(1.0)
         self.gridLayout.addWidget(self.webEngineView, 0, 0, 1, 1)
         self.currentlySelected = None
         self.t1 = threading.Thread(target=get_targets, args=(self,))
@@ -362,7 +364,17 @@ class AddAppDialog(QDialog, Ui_AddAppDialog):
         self.webEngineView.setObjectName(u"webEngineView")
         self.gridLayout.addWidget(self.webEngineView, 1, 0, 1, 1)
         self.webEngineView.setUrl(QUrl("https://sinikraft.github.io/website/api/SiniKraft-STORE/add-app-dialog/list_mai"
-                                       "n.html#"))
+                                       "n.html"))
+        self.webEngineView.loadFinished.connect(self.on_loaded)
+
+    def on_loaded(self):
+        javascript_text = "var list = [];"
+        for element in self.parent().app_list:
+            javascript_text = javascript_text + '\nlist.push("%s");' % element[0]
+        javascript_text = javascript_text + "\nfor(var i = 0, size = list.length; i < size ; i++){\n    var item = li" \
+                                            "st[i];\n    document.getElementById(item).firstElementChild.textContent " \
+                                            "= \"Installed\";\n}"
+        self.webEngineView.page().runJavaScript(javascript_text)
 
 
 class SettingsDialog(QDialog, Ui_SettingsDialog):
