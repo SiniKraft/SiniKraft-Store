@@ -91,9 +91,9 @@ def set_automation(num: int, hour: int, minute: int):
 
     # Create action
     action = task_def.Actions.Create(TASK_ACTION_EXEC)
-    action.ID = 'DO NOTHING'
-    action.Path = 'cmd.exe'
-    action.Arguments = '/c "exit"'
+    action.ID = 'LAUNCH APP'
+    action.Path = os.path.join(os.getcwd(), "Updater.exe")
+    action.Arguments = ''
 
     if num == 0:  # Check each day + on session login
         trigger.Enabled = True
@@ -120,7 +120,7 @@ def set_automation(num: int, hour: int, minute: int):
     task_def.Settings.StopIfGoingOnBatteries = False
     task_def.Settings.RunOnlyIfNetworkAvailable = True
     task_def.Settings.DisallowStartIfOnBatteries = False
-    task_def.Settings.MultipleInstances = 2  # TASK_INSTANCES_IGNORE_NEW - doesn't create if already running
+    task_def.Settings.MultipleInstances = TASK_INSTANCES_IGNORE_NEW  # doesn't create if already running
     task_def.Principal.UserId = sid_str
     task_def.Principal.RunLevel = 0  # Low
 
@@ -209,7 +209,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QMainWindow.__init__(self)
         self.setupUi(self)
         self.app_list = find_apps()
-        print(self.app_list)
         self.setWindowTitle("SiniKraft STORE")
         self.setWindowIcon(QIcon(QPixmap(u":/images/SiniKraft-STORE-icon.png")))
         self.webEngineView = None
@@ -303,6 +302,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super(MainWindow, self).show()
         if os.path.isfile("checking"):
             find_current_task(self)
+            os.remove("checking")
 
     def handle_save_data(self, _type: int):
         # Type 0 : Export Save
