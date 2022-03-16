@@ -308,9 +308,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Type 0 : Export Save
         # Type 1 : Import Save
         game_title = self.app_list[self.currentlySelected][0]
-        if game_title == "NoMoskito!" or game_title == "Gob Fish":
+        if game_title == "NoMoskito!" or game_title == "Gob Fish" or game_title == "Snake":
             if self.app_list[self.currentlySelected][4][-23:] == "Uninstall\\unins000.exe\"":
                 game_unins = self.app_list[self.currentlySelected][4][:-23][1:] + 'save.dat'
+                if game_title == "Snake":
+                    game_unins = self.app_list[self.currentlySelected][4][:-23][1:] + 'sauvegarde.dat'
             else:
                 game_unins = self.app_list[self.currentlySelected][4][:-13][1:] + 'save\\save.dat'
             if _type == 0:

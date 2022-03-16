@@ -29,7 +29,7 @@ def find_apps():
                             except Exception as e:
                                 return ""
 
-                        if get_value("Publisher") == "SiniKraft" or get_value("Publisher") == "Nicklor":
+                        if get_value("Publisher").__contains__("SiniKraft") or get_value("Publisher") == "Nicklor":
                             installer_path = get_value("InstallLocation")
                             if os.path.exists(str(installer_path)):
                                 try:
