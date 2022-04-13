@@ -455,7 +455,9 @@ def showerror(_msg, _win=None, title="SiniKraft STORE - An error occurred"):
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    args = sys.argv
+    args.append("--enable-smooth-scrolling")
+    app = QApplication(args)
     app.setAttribute(Qt.AA_DisableWindowContextHelpButton)
     win = MainWindow()
     icon = QIcon(":/images/SiniKraft-STORE-icon.png")
