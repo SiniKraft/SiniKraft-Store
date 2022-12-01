@@ -1,7 +1,7 @@
 {
 	"SiniKraft STORE": ["0.1.0", "https://github.com/SiniKraft/SiniKraft-Store/releases/download/1.0/SiniKraft-STORE-Setup-0.1.0.exe"],
-	"NoMoskito!": ["0.0.0.14", ""],
-	"Gob Fish": ["1.3", ""],
-	"Discord Spammer": ["0.5", ""],
+	"NoMoskito!": ["1.0", "https://github.com/SiniKraft/NoMoskito/releases/download/1.0/NoMoskito-Setup-1.0-win32.exe"],
+	"Gob Fish": ["1.4", "https://github.com/SiniKraft/Gob-Fish/releases/download/1.4/GobFish_Setup.exe"],
+	"Discord Spammer": ["0.5", "https://github.com/SiniKraft/Discord-Spammer/releases/download/0.5/Discord.Spammer-0.5-amd64.msi"],
 	"Snake": ["1.0", "https://github.com/SiniKraft/Snake/releases/download/1.0/Snake-setup-1.0.exe"]
 }
