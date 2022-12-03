@@ -92,8 +92,9 @@ def set_automation(num: int, hour: int, minute: int):
     # Create action
     action = task_def.Actions.Create(TASK_ACTION_EXEC)
     action.ID = 'LAUNCH APP'
-    action.Path = os.path.join(os.getcwd(), "Updater.exe")
+    action.Path = '"' + str(os.path.join(os.getcwd(), "Updater.exe")) + '"'
     action.Arguments = ''
+    action.WorkingDirectory = str(os.getcwd())
 
     if num == 0:  # Check each day + on session login
         trigger.Enabled = True
@@ -114,12 +115,13 @@ def set_automation(num: int, hour: int, minute: int):
     task_def.RegistrationInfo.Description = 'SiniKraft STORE Automatic Update Task. Disable it in Update Settings, in' \
                                             ' the Application !'
     task_def.RegistrationInfo.Author = getpass.getuser() + " | SiniKraft STORE"
-    task_def.RegistrationInfo.Date = start_time
+    task_def.RegistrationInfo.Date = str(datetime.datetime.now().isoformat())
     task_def.RegistrationInfo.Source = "SiniKraft STORE"
     task_def.Settings.Enabled = True
     task_def.Settings.StopIfGoingOnBatteries = False
     task_def.Settings.RunOnlyIfNetworkAvailable = True
     task_def.Settings.DisallowStartIfOnBatteries = False
+    task_def.Settings.StartWhenAvailable = True
     task_def.Settings.MultipleInstances = TASK_INSTANCES_IGNORE_NEW  # doesn't create if already running
     task_def.Principal.UserId = sid_str
     task_def.Principal.RunLevel = 0  # Low
@@ -289,14 +291,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tableWidget.setItem(apps, 2, QTableWidgetItem(self.app_list[apps][3]))
             self.tableWidget.setItem(apps, 3, QTableWidgetItem(self.app_list[apps][6]))
             self.tableWidget.setItem(apps, 4, QTableWidgetItem("Checking ..."))
+        try:
+            if not os.path.isfile("config.json"):
+                SettingsDialog(self).exec_()
+        except:
+            pass
 
     def update_selection(self, __arg_1: QTableWidgetItem, __arg_2: QTableWidgetItem):
         self.currentlySelected = __arg_1.row()
 
     def check_update(self):
-        p = threading.Thread(target=run, args=(self, True,))
-        p.start()
-        self.close()
+        if not os.path.isfile("Updater.exe"):
+            p = threading.Thread(target=run, args=(self, True,))
+            p.start()
+            self.close()
+            app.exit(0)
+        else:
+            subprocess.Popen(os.path.join(os.getcwd(), "Updater.exe") + " -launched-from-store")
 
     def show(self):
         super(MainWindow, self).show()
@@ -308,7 +319,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Type 0 : Export Save
         # Type 1 : Import Save
         game_title = self.app_list[self.currentlySelected][0]
-        if game_title == "NoMoskito!" or game_title == "Gob Fish" or game_title == "Snake":
+        if game_title == "NoMoskito!" or game_title == "Gob Fish" or game_title == "Snake" or game_title == "GobFish":
             if self.app_list[self.currentlySelected][4][-23:] == "Uninstall\\unins000.exe\"":
                 game_unins = self.app_list[self.currentlySelected][4][:-23][1:] + 'save.dat'
                 if game_title == "Snake":
@@ -431,7 +442,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
 
     def restore_defaults(self):
         time = QTime().currentTime()
-        time.setHMS(0, 0, 0, 0)
+        # time.setHMS(0, 0, 0, 0)
         self.timeEdit.setTime(time)
         self.checkBox_4.setChecked(True)
         self.checkBox_5.setChecked(True)

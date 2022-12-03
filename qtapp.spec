@@ -33,7 +33,8 @@ exe = EXE(pyz,
           disable_windowed_traceback=False,
           target_arch=None,
           codesign_identity=None,
-          entitlements_file=None , icon='SiniKraft-Store-icon.ico')
+          entitlements_file=None,
+          version='file_version_info_sinikraft_store.txt', icon='SiniKraft-Store-icon.ico')
 
 a_2 = Analysis(['update_checker.py'],
              pathex=[],
@@ -64,7 +65,8 @@ exe_2 = EXE(pyz_2,
           disable_windowed_traceback=False,
           target_arch=None,
           codesign_identity=None,
-          entitlements_file=None , icon='SiniKraft-Store-icon.ico')
+          entitlements_file=None,
+          version='file_version_info_updater.txt', icon='SiniKraft-Store-icon.ico')
 
 coll = COLLECT(exe,
                a.binaries,

@@ -105,11 +105,14 @@ def get_tasks():
 
 
 def perform(parent=None, show_msg=False):
+    no_notif = False
+    if parent is not None:
+        no_notif = True
+    show_msg = False
+    parent = None
     with open("checking", "w") as file:
         file.write("\n")
         file.close()
-    parent = None
-    show_msg = False
     if os.path.isfile("update_checker.log"):
         try:
             os.remove("update_checker.log")
@@ -117,9 +120,9 @@ def perform(parent=None, show_msg=False):
             pass
     if parent is not None:
         to_write = ("Starting Update Checking at %s from %s" % (
-            datetime.datetime.now().isocalendar(), "SiniKraft STORE app"))
+            str(datetime.datetime.now()), "SiniKraft STORE app"))
     else:
-        to_write = ("Starting Update Checking at %s from %s" % (datetime.datetime.now().isocalendar(),
+        to_write = ("Starting Update Checking at %s from %s" % (str(datetime.datetime.now()),
                                                                 "Update Checker Service"))
     _continue = True
     result = check_update_main()
@@ -159,6 +162,9 @@ def perform(parent=None, show_msg=False):
             msg.exec_()
 
         if not found:
+            if no_notif or ("-launched-from-store" in sys.argv):
+                notifies("No Updates !", "You are up-to-date !")
+                time.sleep(10)
             if show_msg:
                 msg = QMessageBox(parent)
                 msg.setWindowIcon(QIcon(QPixmap(":/images/SiniKraft-STORE-icon.png")))
@@ -167,6 +173,12 @@ def perform(parent=None, show_msg=False):
                 msg.setText("No Updates were found ! You are up-to-date !")
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.exec_()
+            try:
+                os.remove("checking")
+            except:
+                pass
+            appp = QApplication.instance()
+            appp.exit(0)
         else:
             manage_tasks()
 
@@ -222,6 +234,7 @@ def manage_tasks():
         msg.setText("An error occured while checking for updates : " + str(e))
         msg.setStandardButtons(QMessageBox.Ok)
         msg.exec_()
+
 
 
 def notifies(title, message):
@@ -280,11 +293,15 @@ def process(dict_: dict):
         extension = dict_["current_task"][4][:-1][-4:]
         if extension == ".exe":
             path = os.path.expandvars("%TEMP%") + "\\" + "tmp_installer.exe"
+            log("\nInstalling now ... with command '%s'" % (str(path + " /VERYSILENT")))
+            a = subprocess.check_output(path + " /VERYSILENT")
+            log("\nInstalling process returned exit code 0 and output : %s" % a.decode())
         else:
             path = os.path.expandvars("%TEMP%") + "\\" + "tmp_installer.msi"
-        log("\nInstalling now ... with command '%s'" % (str(path + " /VERYSILENT")))
-        a = subprocess.check_output(path + " /VERYSILENT")
-        log("\nInstalling process returned exit code 0 and output : %s" % a.decode())
+            log("\nInstalling now ... with command '%s'" % (str('msiexec /I "' + path + '" /QUIET')))
+            a = subprocess.check_output('msiexec /I "' + path + '" /QUIET')
+            log("\nInstalling process returned exit code 0 and output : %s" % a.decode())
+
         try:
             os.remove(path)
         except Exception as e:
