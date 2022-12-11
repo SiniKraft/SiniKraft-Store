@@ -384,9 +384,11 @@ class AddAppDialog(QDialog, Ui_AddAppDialog):
         javascript_text = "var list = [];"
         for element in self.parent().app_list:
             javascript_text = javascript_text + '\nlist.push("%s");' % element[0]
+        javascript_text = javascript_text.replace('GobFish', 'Gob Fish')  # fix name change
         javascript_text = javascript_text + "\nfor(var i = 0, size = list.length; i < size ; i++){\n    var item = li" \
-                                            "st[i];\n    document.getElementById(item).firstElementChild.textContent " \
-                                            "= \"Installed\";\n}"
+                                            "st[i];\n    if (document.getElementById(item) != null) {\n        docume" \
+                                            "nt.getElementById(item).firstElementChild.textContent = \"Installed\"\n " \
+                                            "   }\n}"
         self.webEngineView.page().runJavaScript(javascript_text)
 
 

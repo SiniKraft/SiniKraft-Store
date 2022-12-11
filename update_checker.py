@@ -18,55 +18,63 @@ import ui_sinikraft_launcher_rc  # type: ignore
 def find_apps():
     app_list = []
     hkeys = [winreg.HKEY_CURRENT_USER, winreg.HKEY_LOCAL_MACHINE]
-    for hkey in hkeys:
-        with winreg.OpenKey(hkey, r"Software\Microsoft\Windows\CurrentVersion\Uninstall") as h_apps:
-            for idx in range(winreg.QueryInfoKey(h_apps)[0]):
-                try:
-                    with winreg.OpenKeyEx(h_apps, winreg.EnumKey(h_apps, idx)) as h_app_info:
-                        def get_value(key):
-                            try:
-                                return winreg.QueryValueEx(h_app_info, key)[0]
-                            except Exception as e:
-                                return ""
-
-                        if get_value("Publisher").__contains__("SiniKraft") or get_value("Publisher") == "Nicklor":
-                            installer_path = get_value("InstallLocation")
-                            if os.path.exists(str(installer_path)):
+    accesses = [winreg.KEY_READ | winreg.KEY_WOW64_32KEY, winreg.KEY_READ | winreg.KEY_WOW64_64KEY]
+    for access in accesses:
+        for hkey in hkeys:
+            with winreg.OpenKey(hkey, r"Software\Microsoft\Windows\CurrentVersion\Uninstall", 0, access) as h_apps:
+                for idx in range(winreg.QueryInfoKey(h_apps)[0]):
+                    try:
+                        with winreg.OpenKeyEx(h_apps, winreg.EnumKey(h_apps, idx)) as h_app_info:
+                            def get_value(key):
                                 try:
-                                    icon_str = get_value("DisplayIcon")
+                                    return winreg.QueryValueEx(h_app_info, key)[0]
                                 except Exception as e:
-                                    icon_str = ""
-                                date = get_value("InstallDate")
-                                date = date[6] + date[7] + "/" + date[4] + date[5] + "/" + date[0] + date[1] + \
-                                       date[2] + date[3]
-                                app_list.append((get_value("DisplayName").split(" version")[0], icon_str,
-                                                 get_value("DisplayVersion"), date,
-                                                 get_value("UninstallString"), 'start /wait "" ' +
-                                                 get_value("QuietUninstallString").replace("/SILENT", "/VERYSILENT"),
-                                                 (str(round(get_value("EstimatedSize") / 1024, 2)) + " Mo")
-                                                 .replace(".", ",")))
-                        elif get_value("Publisher") == "UNKNOWN":
-                            if get_value("DisplayName") == "Discord Spammer":
+                                    return ""
+
+                            if get_value("Publisher").__contains__("SiniKraft") or get_value("Publisher") == "Nicklor":
                                 installer_path = get_value("InstallLocation")
                                 if os.path.exists(str(installer_path)):
                                     try:
                                         icon_str = get_value("DisplayIcon")
                                     except Exception as e:
                                         icon_str = ""
-                                date = get_value("InstallDate")
-                                date = date[6] + date[7] + "/" + date[4] + date[5] + "/" + date[0] + date[1] + \
-                                       date[2] + date[3]
-                                app_list.append((get_value("DisplayName").split(" version")[0], icon_str,
-                                                 get_value("DisplayVersion"), date,
-                                                 get_value("UninstallString"), "start /wait " +
-                                                 get_value("UninstallString").replace("/I", "/X") + " /QUIET",
-                                                 (str(round(get_value("EstimatedSize") / 1024, 2)) + " Mo")
-                                                 .replace(".", ",")))
-
-                except (WindowsError, KeyError, ValueError):
-                    continue
-
-    return app_list
+                                    if get_value("DisplayName").split(" version")[0] == "GobFish":
+                                        icon_str = get_value("InstallLocation") + "GobFish.exe"
+                                    if get_value("DisplayName").split(" version")[0] == "Youtube Downloader by Nicklor":
+                                        icon_str = get_value("InstallLocation") + "YoutubeDownloader.exe"
+                                    date = get_value("InstallDate")
+                                    date = date[6] + date[7] + "/" + date[4] + date[5] + "/" + date[0] + date[1] + \
+                                           date[2] + date[3]
+                                    app_list.append((get_value("DisplayName").split(" version")[0], icon_str,
+                                                     get_value("DisplayVersion"), date,
+                                                     get_value("UninstallString"), 'start /wait "" ' +
+                                                     get_value("QuietUninstallString").replace("/SILENT", "/VERYSILENT"),
+                                                     (str(round(get_value("EstimatedSize") / 1024, 2)) + " Mo")
+                                                     .replace(".", ",")))
+                            elif get_value("Publisher") == "UNKNOWN":
+                                if get_value("DisplayName") == "Discord Spammer":
+                                    installer_path = get_value("InstallLocation")
+                                    if os.path.exists(str(installer_path)):
+                                        try:
+                                            icon_str = get_value("DisplayIcon")
+                                        except Exception as e:
+                                            icon_str = ""
+                                    date = get_value("InstallDate")
+                                    date = date[6] + date[7] + "/" + date[4] + date[5] + "/" + date[0] + date[1] + \
+                                           date[2] + date[3]
+                                    app_list.append((get_value("DisplayName").split(" version")[0], icon_str,
+                                                     get_value("DisplayVersion"), date,
+                                                     get_value("UninstallString"), "start /wait " +
+                                                     get_value("UninstallString").replace("/I", "/X") + " /QUIET",
+                                                     (str(round(get_value("EstimatedSize") / 1024, 2)) + " Mo")
+                                                     .replace(".", ",")))
+                    except (WindowsError, KeyError, ValueError):
+                        continue
+    new_app_list = []
+    for element in app_list:
+        if not element in new_app_list:
+            new_app_list.append(element)
+    return new_app_list
 
 
 def check_update_main():
