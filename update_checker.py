@@ -288,11 +288,11 @@ def process(dict_: dict):
                 notifies("Download Finished !", "The Update for %s is now downloaded ! Installing Update now" % (
                     dict_["current_task"][0]))
             uninstall_cmd = dict_["current_task"][5]
-            log("\nCalling " + "cmd /c " + uninstall_cmd)
+            log("\nCalling " + uninstall_cmd)
             if params_dict["notifications"]["start_install"]:
                 notifies("Installing Update", "%s will be fist uninstalled and then reinstalled." % (dict_["current_tas"
                                                                                                            "k"][0]))
-            a = subprocess.check_output("cmd /c " + uninstall_cmd, shell=False)
+            a = subprocess.check_output(uninstall_cmd, shell=True)
             log("\nUninstalling cmd returned exit code 0 with output : " + a.decode())
             dict_["current_state"] = 3
             write_to_task(dict_)
