@@ -244,7 +244,6 @@ def manage_tasks():
         msg.exec_()
 
 
-
 def notifies(title, message):
     icon = QIcon(":/images/SiniKraft-STORE-icon.png")
     tray = QSystemTrayIcon()
@@ -270,7 +269,8 @@ def process(dict_: dict):
             log("\nFinished Downloading !")
             if params_dict["notifications"]["finish_download"] and not params_dict["automating"]["install_when_download"
                                                                                                  "ed"]:
-                notifies("Download Finished !", "The Update for %s is now downloaded !" % (dict_["current_task"][0]))
+                notifies("Download Finished !", "The Update for %s is now downloaded !\nIt's in %%TEMP%%, 'tmp_installe"
+                                                "r' !" % (dict_["current_task"][0]))
             dict_["current_state"] = 2
             write_to_task(dict_)
         except Exception as e:

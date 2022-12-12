@@ -6,6 +6,7 @@ import sys
 import threading
 import datetime
 import getpass
+import urllib.request
 
 from urllib.parse import urlparse
 
@@ -104,11 +105,11 @@ def set_automation(num: int, hour: int, minute: int):
         trigger_4.Enabled = True
     elif num == 2:  # Check on session login
         trigger_4.Enabled = True
-    elif num == 3:   # Check each day
+    elif num == 3:  # Check each day
         trigger.Enabled = True
-    elif num == 4:   # Check each week
+    elif num == 4:  # Check each week
         trigger_2.Enabled = True
-    elif num == 5:   # Check each month
+    elif num == 5:  # Check each month
         trigger_3.Enabled = True
 
     # Set parameters
@@ -162,7 +163,43 @@ class WebEnginePage(QWebEnginePage):
     def acceptNavigationRequest(self, url, _type, is_main_frame):
         if _type == QWebEnginePage.NavigationTypeLinkClicked:
             if not find_domain(url) == find_domain(self.url()):
-                QDesktopServices.openUrl(url)
+                if str(url.url())[-4:] == ".exe" or str(url.url())[-4:] == ".msi":
+                    msgbox = QMessageBox(parent=self.parent())
+                    msgbox.setIcon(QMessageBox.Question)
+                    msgbox.setWindowTitle("SiniKraft STORE")
+                    msgbox.setText("An app is about to be installed."
+                                   "\nDo you want to let SiniKraft STORE install it,\n"
+                                   "Or open the download in your browser ?")
+                    msgbox.setStandardButtons(
+                        QMessageBox.Cancel | QMessageBox.Yes | QMessageBox.Discard | QMessageBox.Ignore)
+                    install_btn = msgbox.button(QMessageBox.Yes)
+                    install_btn.setText("Install")
+                    copy_btn = msgbox.button(QMessageBox.Ignore)
+                    copy_btn.setText("Copy Link")
+                    open_btn = msgbox.button(QMessageBox.Discard)
+                    open_btn.setText("Open in browser")
+
+                    msgbox.exec_()
+                    if msgbox.clickedButton() == open_btn:
+                        QDesktopServices.openUrl(url)
+                    if msgbox.clickedButton() == copy_btn:
+                        clipboard = QApplication.clipboard()
+                        clipboard.setText(url.url())
+                    if msgbox.clickedButton() == install_btn:
+                        path_to_save = os.path.expandvars("%TEMP%") + "\\" + "tmp_installer" + url.url()[-4:]
+                        a = QMessageBox.information(self.parent(), "SiniKraft STORE",
+                                                    "The download will start after you press ok"
+                                                    "\nThis can take a while, so please do not close the app"
+                                                    "\nEven if it's not responding. When the download finish,\n"
+                                                    "The installer will launch normally.", QMessageBox.Ok,
+                                                    QMessageBox.Cancel)
+                        if a == QMessageBox.Ok:
+                            urllib.request.urlretrieve(url.url(), path_to_save)
+                            if path_to_save[-4:] == ".msi":
+                                path_to_save = "MsiExec.exe /I " + path_to_save
+                            subprocess.Popen(path_to_save)
+                else:
+                    QDesktopServices.openUrl(url)
                 return False
         return True
 
@@ -173,6 +210,7 @@ class HtmlView(QWebEngineView):
         self.setPage(WebEnginePage(self))
 
     def createWindow(self, _type):
+        print(_type)
         super(HtmlView, self).createWindow(_type)
         if _type == QWebEnginePage.WebBrowserTab:
             self.parent().webEngineView2 = HtmlView2()
